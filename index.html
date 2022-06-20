@@ -14,7 +14,7 @@
         }
 
         div{
-            color: rgb(17, 224, 62);
+            color: rgb(36, 243, 29);
             font-size: 30px;
         }
 
@@ -26,7 +26,7 @@
         input{
             border: 4px solid rgb(236, 18, 18);
             padding: 0%;
-            width: 300px;
+           
             height: 30px;
             font-size: 18px;
             padding-left: 10px;
@@ -37,6 +37,25 @@
             width: 120px;
         }
 
+        .clTamanhoCss{
+            border: 2px solid rgb(251, 253, 253);
+            padding: 5px;
+
+        }
+
+        .clLabelDisplay{
+            display: inline;
+
+        }
+
+        .clNumberDisplay{
+            display: block;
+        }
+
+        #idTamanhoCss{
+            display: flex;
+
+        }
        
 
     </style> 
@@ -50,12 +69,24 @@
             <input type="text" id="idNome" name="nmNome">
         </div>
         <div>
-            <label for="idTamanho">Tamanho da pizza</label>
-            <input type="number" id="idTamanho" name="nmTamanho" step="0.01" placeholder="Diâmetro (cm)">
-        </div>
-        <div>
             <label for="idValor">Preço</label>
             <input type="number" id="idValor" name="nmvalor" step="0.01">
+        </div>
+        <div>
+            <label>Selecione o formato</label>
+        </div>
+        <div id="idTamanhoCss">    <!--Radio Button para escolher o formato da pizza-->
+                <div class="clTamanhoCss">
+                    <input type="radio" id="idRedonda" name="nmTamanho" checked>
+                    <label for="idRedonda" class="clLabelDisplay">Pizza Redonda</label>
+                    <input type="number" id="idTamanhoRedonda" class="clNumberDisplay" placeholder="Tamanho (cm)">
+                </div>
+                <div class="clTamanhoCss"> 
+                    <input type="radio" id="idQuadrada" name="nmTamanho">
+                    <label for="idQuadrada" class="clLabelDisplay">Pizza Retangular ou Quadrada</label>
+                    <input type="number" id="idTamanhoQuadrada1" class="clNumberDisplay" placeholder="Largura (cm)">
+                    <input type="number" id="idTamanhoQuadrada2" class="clNumberDisplay"placeholder="Altura (cm)">
+                </div>
         </div>
         <div>
             <input type="button" value="Adicionar " id="idAdicionar" class="clButton">
@@ -76,36 +107,126 @@
         var custobeneficio = []
 
         adicionar.onclick = function () {
+            let isredonda = document.getElementById("idRedonda").checked
             let nome = document.getElementById("idNome").value 
-            let tamanho = document.getElementById("idTamanho").value 
+            let tamanhoRedonda = document.getElementById("idTamanhoRedonda").value 
+            let tamanhoQuadrada1 = document.getElementById("idTamanhoQuadrada1").value
+            let tamanhoQuadrada2 = document.getElementById("idTamanhoQuadrada2").value
             let valor = document.getElementById("idValor").value 
             let adicionarEsse = true
-
-            for (let i = 0; i < tamanhos.length; i++) {  //for para testar se o tamanho não é repetido
-
-                if (tamanho == tamanhos[i] ) {
-                    adicionarEsse = false
-               
-            }
-            }
-            if (adicionarEsse) {       
-                nomes.push(nome)
-                tamanhos.push(tamanho)
-                valores.push(valor)
-                valorPorCmRedonda(tamanho, valor)
-                limparDados()
-
+            var campos = true
+          
+            //chama as funções para a pizza redonda
+            if (isredonda) {   
+          
+                campos = validarCamposRedonda(nome, valor, tamanhoRedonda)
+             
+                if (campos) {
+                    testarTamanhoRedondo(tamanhoRedonda)
+            
+                } else {
+                    alert("Você escolheu pizza redonda, e nesse quesito todos os campos devem ser preenchidos, exceto altura e largura")
+                    limparDados()
+                }
+                
+            //chama as funções para a pizza quadrada    
             } else {
-                adicionarEsse = true
-                alert("Adicione um tamanho diferente dos anteriores.")
-                limparDados()
+
+                campos = validarCamposQuadrada(nome, valor, tamanhoQuadrada1, tamanhoQuadrada2)
+             
+                if (campos) {
+                    testarTamanhoQuadrado(tamanhoQuadrada1, tamanhoQuadrada2)
+            
+                } else {
+                    alert("Você escolheu pizza retangular ou quadrada, e nesse quesito todos os campos devem ser preenchidos, exceto tamanho")
+                    limparDados()
+                }
+
+                
             }
+
+            //função para ver se os campos tem dados validos na pizza redonda
+            function validarCamposRedonda(campos) {
+                if ((nome == "") || (nome == " ") ||
+                    (valor == "") || (valor == " ") ||
+                    (tamanhoRedonda == "") || (tamanhoRedonda == " ")) {
+                        return false
+                    }
+                return true 
+            }
+
+            //função para ver se os campos tem dados validos na pizza redonda
+            function validarCamposQuadrada(nome, valor, tamanhoQuadrada1, tamanhoQuadrada2) {
+                if ((nome == "") || (nome == " ") ||
+                    (valor == "") || (valor == " ") ||
+                    (tamanhoQuadrada1 == "") || (tamanhoQuadrada1 == " ") ||
+                    (tamanhoQuadrada2 == "") || (tamanhoQuadrada2 == " ")) {
+                        return false
+                    }
+                return true 
+            }
+
+            //função para testar se o tamanho da pizza redonda não é repetido
+            function testarTamanhoRedondo(tamanhoRedonda) {
+          
+                for (let i = 0; i < tamanhos.length; i++) {  
+
+                    if (tamanhoRedonda == tamanhos[i] ) {
+                    adicionarEsse = false
+                    }
+                }
+
+                if (adicionarEsse) {
+                    nomes.push(nome)
+                    tamanhos.push(tamanhoRedonda)
+                    valores.push(valor)
+                    valorPorCmRedonda(tamanhoRedonda, valor)
+                    limparDados()
+
+                } else {
+                    adicionarEsse = true
+                    alert("Adicione um tamanho diferente dos anteriores.")
+                    limparDados()
+                }
        
+            }
+
+            //função para testar se o tamanho da pizza quadrada não é repetido
+            function testarTamanhoQuadrado(tamanhoQuadrada1, tamanhoQuadrada2) {
+          
+                for (let i = 0; i < tamanhos.length; i++) {  
+
+                    if (((tamanhoQuadrada1 + "X" + tamanhoQuadrada2) == tamanhos[i]) ||
+                        ((tamanhoQuadrada2 + "X" + tamanhoQuadrada1) == tamanhos[i])) {
+                        adicionarEsse = false
+                
+                    }
+                }
+
+                if (adicionarEsse) {
+                    nomes.push(nome)
+                    tamanhos.push(tamanhoQuadrada1 + "X" + tamanhoQuadrada2)
+                    valores.push(valor)
+                    valorPorCmQuadrada(tamanhoQuadrada1, tamanhoQuadrada2, valor)
+                    limparDados()
+
+                } else {
+                    adicionarEsse = true
+                    alert("Adicione um tamanho diferente dos anteriores.")
+                    limparDados()
+                }
+            }
         }
 
-        //esta função calcula e adicona o valor por cm quadrado
-        function valorPorCmRedonda(tamanho, valor){        
-            valorPorCm = (valor / (Math.PI * ((tamanho / 2) ** 2))).toFixed(2)
+        //esta função calcula e adicona o valor por cm^2 da pizza redonda
+        function valorPorCmRedonda(tamanhoRedonda, valor){
+            valorPorCm = (valor / (Math.PI * ((tamanhoRedonda / 2) ** 2))).toFixed(2)
+            valoresPorCm.push(valorPorCm)
+        }
+
+        //esta função calcula e adicona o valor por cm^2 da pizza quadrada
+        function valorPorCmQuadrada(tamanhoQuadrada1, tamanhoQuadrada2, valor){
+            valorPorCm = (valor / (tamanhoQuadrada1 * tamanhoQuadrada2)).toFixed(2)
             valoresPorCm.push(valorPorCm)
         }
 
@@ -118,7 +239,7 @@
                 for (i = 0; i < valoresPorCm.length; i++) {
                     if (valoresPorCm[i] > valoresPorCm[i + 1]) {
                         isTrocou = true
-                        let aux1 = valoresPorCm[i]           //variavel auxiliar para trocar os valore por cm^2
+                        let aux1 = valoresPorCm[i]           //variavel auxiliar para trocar os valores por cm^2
                         valoresPorCm[i] = valoresPorCm[i + 1]
                         valoresPorCm[i + 1] = aux1
 
@@ -145,11 +266,13 @@
 
         }
 
-
+        //função para limpar os campos
         function limparDados() {
             document.getElementById("idNome").value = ""
-            document.getElementById("idTamanho").value = ""
+            document.getElementById("idTamanhoRedonda").value = ""
             document.getElementById("idValor").value = ""
+            document.getElementById("idTamanhoQuadrada1").value = ""
+            document.getElementById("idTamanhoQuadrada2").value = ""
 
         }
 
